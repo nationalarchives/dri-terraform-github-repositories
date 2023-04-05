@@ -3,6 +3,8 @@ module "github_environments_repository" {
   repository_name = "dri-terraform-github-environments"
   language        = "Scala"
   checks          = ["terraform-check:0"]
+  team_name       = "digital-records-infrastructure"
+  team_permission = "admin"
 }
 
 module "repository_role" {

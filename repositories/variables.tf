@@ -23,6 +23,13 @@ variable "collaborators" {
   type    = set(string)
   default = []
 }
+
 variable "language" {
   description = "Used to generate a .gitignore template"
 }
+
+variable "team_permission" {
+  default = "pull"
+}
+
+variable "team_name" {}

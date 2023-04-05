@@ -54,3 +54,9 @@ resource "github_repository_collaborator" "collaborators" {
   repository = github_repository.repository.name
   username   = each.value
 }
+
+resource "github_team_repository" "team_repository" {
+  repository = github_repository.repository.name
+  team_id    = var.team_name
+  permission = var.team_permission
+}
