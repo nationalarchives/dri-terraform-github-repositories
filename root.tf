@@ -1,6 +1,6 @@
 module "github_environments_repository" {
   source          = "./repositories"
-  repository_name = "dp-terraform-github-environments"
+  repository_name = "dp-preservica-client"
   language        = "Scala"
   checks          = ["test:test"]
   team_name       = "digital-records-infrastructure"
