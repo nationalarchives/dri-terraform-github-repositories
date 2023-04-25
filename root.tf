@@ -2,7 +2,7 @@ module "github_environments_repository" {
   source          = "./repositories"
   repository_name = "dp-preservica-client"
   language        = "Scala"
-  checks          = ["test:test"]
+  checks          = ["test:0"]
   team_name       = "digital-records-infrastructure"
   team_permission = "admin"
   secrets = {
