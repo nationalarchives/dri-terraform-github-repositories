@@ -11,6 +11,6 @@ module "github_environments_repository" {
     SONATYPE_USERNAME = data.aws_ssm_parameter.github_sonatype_username.value
     SONATYPE_PASSWORD = data.aws_ssm_parameter.github_sonatype_password.value
     GPG_PRIVATE_KEY   = data.aws_ssm_parameter.github_gpg_key.value
-    GPG_PASSWORD      = data.aws_ssm_parameter.github_gpg_passphrase.value
+    GPG_PASSPHRASE    = data.aws_ssm_parameter.github_gpg_passphrase.value
   }
 }
