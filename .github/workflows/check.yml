@@ -1,0 +1,52 @@
+name: 'Terraform check'
+on:
+  pull_request:
+permissions:
+  id-token: write
+  contents: write
+jobs:
+  terraform-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: nationalarchives/tdr-github-actions/.github/actions/run-git-secrets@main
+      - uses: nationalarchives/tdr-github-actions/.github/actions/slack-send@main
+        if: failure()
+        with:
+          message: ":warning: Secrets found in repository ${{ inputs.repo-name }}"
+          slack-url: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Configure AWS credentials for S3 state file access
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.MANAGEMENT_ACCOUNT }}:role/MgmtDPTerraformGitHubRepositoriesRole
+          aws-region: eu-west-2
+          role-session-name: TerraformRole
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check --recursive
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+      - name: Terraform Plan
+        run: |
+          terraform plan -no-color -out=out > /dev/null
+          terraform show -no-color out > out.plan
+          echo -e "\`\`\`\n$(cat out.plan)\n\`\`\`" > out.plan
+        env:
+          GITHUB_OWNER: nationalarchives
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+      - name: Add comment
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/nationalarchives/${{github.event.repository.name}}/issues/${{github.event.number}}/comments \
+            -f body="$(cat out.plan)"
+        env:
+          GITHUB_OWNER: nationalarchives
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}

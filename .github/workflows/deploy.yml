@@ -1,0 +1,38 @@
+name: 'Terraform apply'
+on:
+  push:
+    branches:
+      - main
+permissions:
+  id-token: write
+  contents: write
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials for S3 state file access
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.MANAGEMENT_ACCOUNT }}:role/MgmtDPTerraformGitHubRepositoriesRole
+          aws-region: eu-west-2
+          role-session-name: TerraformRole
+      - name: Terraform apply
+        run: |
+          terraform init
+          terraform apply --auto-approve
+        env:
+          GITHUB_OWNER: nationalarchives
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+      - name: Send failure message
+        if: failure()
+        uses: nationalarchives/tdr-github-actions/.github/actions/slack-send@main
+        with:
+          message: ":warning: ${{github.event.repository.name}} deploy failed"
+          slack-url: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Send success message
+        uses: nationalarchives/tdr-github-actions/.github/actions/slack-send@main
+        with:
+          message: ":white_check_mark: ${{github.event.repository.name}} deploy successful"
+          slack-url: ${{ secrets.SLACK_WEBHOOK }}
