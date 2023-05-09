@@ -17,8 +17,8 @@ module "github_environments_repository" {
 
 module "github_schemas_repository" {
   source          = "./repositories"
-  repository_name = "dp-preservica-schemas"
-  language        = "Python"
+  repository_name = "dp-preservica-config"
+  language        = "Scala"
   checks          = ["test:0"]
   team_name       = "digital-records-infrastructure"
   team_permission = "admin"
@@ -27,3 +27,4 @@ module "github_schemas_repository" {
     SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
   }
 }
+
