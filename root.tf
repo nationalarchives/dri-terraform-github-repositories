@@ -15,7 +15,7 @@ module "github_environments_repository" {
   }
 }
 
-module "github_schemas_repository" {
+module "github_preservica_config_repository" {
   source          = "./repositories"
   repository_name = "dp-preservica-config"
   language        = "Scala"
