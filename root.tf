@@ -1,5 +1,5 @@
 module "github_preservica_client_repository" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repositories"
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dp-preservica-client"
   secrets = {
     WORKFLOW_TOKEN    = data.aws_ssm_parameter.github_workflow_token.value
@@ -12,7 +12,7 @@ module "github_preservica_client_repository" {
 }
 
 module "github_preservica_config_repository" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repositories"
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dp-preservica-config"
   secrets = {
     MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
