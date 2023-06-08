@@ -43,6 +43,7 @@ module "terraform_environments_repository" {
   secrets = {
     MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
     SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
   }
 }
 
