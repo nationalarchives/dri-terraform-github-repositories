@@ -41,9 +41,12 @@ module "terraform_environments_repository" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dp-terraform-environments"
   secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
+    MANAGEMENT_ACCOUNT     = data.aws_caller_identity.current.account_id
+    SLACK_WEBHOOK          = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN         = data.aws_ssm_parameter.github_workflow_token.value
+    INTG_ACCOUNT_NUMBER    = data.aws_ssm_parameter.intg_account_number.value
+    STAGING_ACCOUNT_NUMBER = data.aws_ssm_parameter.staging_account_number.value
+    PROD_ACCOUNT_NUMBER    = data.aws_ssm_parameter.prod_account_number.value
   }
 }
 
