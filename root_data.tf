@@ -23,3 +23,15 @@ data "aws_ssm_parameter" "github_sonatype_username" {
 data "aws_ssm_parameter" "github_sonatype_password" {
   name = "/mgmt/sonatype/password"
 }
+
+data "aws_ssm_parameter" "intg_account_number" {
+  name = "/mgmt/intg_account_number"
+}
+
+data "aws_ssm_parameter" "staging_account_number" {
+  name = "/mgmt/staging_account_number"
+}
+
+data "aws_ssm_parameter" "prod_account_number" {
+  name = "/mgmt/prod_account_number"
+}
