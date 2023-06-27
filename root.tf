@@ -34,6 +34,15 @@ module "closure_expiration_event_lambda" {
   }
 }
 
+module "notifications_lambda" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-notifications"
+  secrets = {
+    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
+    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
+  }
+}
+
 locals {
   account_secrets = {
     for environment, _ in module.configuration.account_numbers : environment => {
@@ -107,4 +116,16 @@ module "tna_aws_accounts_repository_environments" {
   repository_name       = "nationalarchives/tdr-aws-accounts"
   team_slug             = "digital-records-repository"
   integration_team_slug = ["digital-records-repository"]
+}
+
+module "notifications_repository_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-notifications"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = ["digital-records-repository"]
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
 }
