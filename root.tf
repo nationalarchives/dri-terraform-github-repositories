@@ -57,6 +57,16 @@ module "notifications_lambda" {
   }
 }
 
+module "entity_event_generation_lambda" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-entity-event-generator"
+  secrets = {
+    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
+    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
+  }
+}
+
 locals {
   account_secrets = {
     for environment, _ in module.configuration.account_numbers : environment => {
