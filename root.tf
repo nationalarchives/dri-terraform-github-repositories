@@ -16,7 +16,7 @@ module "github_preservica_client_repository" {
   }
 }
 
-module "github_log4j_plugin_repository" {
+module "github_sbt_assembly_log4j_plugin_repository" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/sbt-assembly-log4j"
   secrets = {
