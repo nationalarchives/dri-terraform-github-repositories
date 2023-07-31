@@ -67,6 +67,18 @@ module "entity_event_generation_lambda" {
   }
 }
 
+module "entity_event_generation_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-entity-event-generator"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = ["digital-records-repository"]
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
+}
+
 locals {
   account_secrets = {
     for environment, _ in module.configuration.account_numbers : environment => {
