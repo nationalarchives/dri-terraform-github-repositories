@@ -5,7 +5,7 @@ module "configuration" {
 
 module "github_preservica_client_repository" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dp-preservica-client"
+  repository_name = "nationalarchives/dr2-preservica-client"
   secrets = {
     WORKFLOW_TOKEN    = data.aws_ssm_parameter.github_workflow_token.value
     SLACK_WEBHOOK     = data.aws_ssm_parameter.github_slack_webhook.value
@@ -31,16 +31,7 @@ module "github_sbt_assembly_log4j_plugin_repository" {
 
 module "github_preservica_config_repository" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dp-preservica-config"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-  }
-}
-
-module "closure_expiration_event_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dp-closure-expiration-event-generation"
+  repository_name = "nationalarchives/dr2-preservica-config"
   secrets = {
     MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
     SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
@@ -76,6 +67,17 @@ module "ingest_parsed_court_documents_event_handler_environments" {
   integration_team_slug = []
   secrets = {
     ACCOUNT_NUMBER = each.value
+  }
+}
+
+module "dr2_github_actions_scala_steward" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-github-actions"
+  secrets = {
+    WORKFLOW_TOKEN  = data.aws_ssm_parameter.github_workflow_token.value
+    GPG_KEY_ID      = data.aws_ssm_parameter.github_gpg_key_id
+    GPG_PRIVATE_KEY = data.aws_ssm_parameter.github_gpg_key.value
+    GPG_PASSPHRASE  = data.aws_ssm_parameter.github_gpg_passphrase.value
   }
 }
 
@@ -116,7 +118,7 @@ locals {
 
 module "terraform_environments_repository" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dp-terraform-environments"
+  repository_name = "nationalarchives/dr2-terraform-environments"
   secrets = merge(local.account_secrets["intg"], local.account_secrets["staging"], local.account_secrets["prod"], local.account_secrets["mgmt"], {
     DR2_MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
     DR2_SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
@@ -128,7 +130,7 @@ module "terraform_environments_repository_environments" {
   for_each              = module.configuration.account_numbers
   source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
   environment           = each.key
-  repository_name       = "nationalarchives/dp-terraform-environments"
+  repository_name       = "nationalarchives/dr2-terraform-environments"
   team_slug             = "digital-records-repository"
   integration_team_slug = ["digital-records-repository"]
   secrets = {
