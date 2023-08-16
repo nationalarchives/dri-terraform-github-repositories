@@ -75,7 +75,7 @@ module "dr2_github_actions_scala_steward" {
   repository_name = "nationalarchives/dr2-github-actions"
   secrets = {
     WORKFLOW_TOKEN  = data.aws_ssm_parameter.github_workflow_token.value
-    GPG_KEY_ID      = data.aws_ssm_parameter.github_gpg_key_id
+    GPG_KEY_ID      = data.aws_ssm_parameter.github_gpg_key_id.value
     GPG_PRIVATE_KEY = data.aws_ssm_parameter.github_gpg_key.value
     GPG_PASSPHRASE  = data.aws_ssm_parameter.github_gpg_passphrase.value
   }
