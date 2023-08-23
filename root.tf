@@ -67,6 +67,18 @@ module "ingest_parsed_court_documents_event_handler_lambda" {
   }
 }
 
+module "ingest_parsed_court_documents_event_handler_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-ingest-parsed-court-document-event-handler"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = []
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
+}
+
 module "ingest_mapper_lambda" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-ingest-mapper"
@@ -82,18 +94,6 @@ module "ingest_mapper_environments" {
   source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
   environment           = each.key
   repository_name       = "nationalarchives/dr2-ingest-mapper"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_parsed_court_documents_event_handler_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-parsed-court-document-event-handler"
   team_slug             = "digital-records-repository"
   integration_team_slug = []
   secrets = {
