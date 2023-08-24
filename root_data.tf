@@ -8,6 +8,10 @@ data "aws_ssm_parameter" "github_gpg_key" {
   name = "/mgmt/gpg/key"
 }
 
+data "aws_ssm_parameter" "github_gpg_key_id" {
+  name = "/mgmt/gpg/id"
+}
+
 data "aws_ssm_parameter" "github_gpg_passphrase" {
   name = "/mgmt/gpg/passphrase"
 }
