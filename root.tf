@@ -38,16 +38,6 @@ module "github_preservica_config_repository" {
   }
 }
 
-module "notifications_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-notifications"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
 module "ingest_parsed_court_documents_event_handler_lambda" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-ingest-parsed-court-document-event-handler"
@@ -244,13 +234,23 @@ module "tna_aws_accounts_repository_environments" {
   integration_team_slug = ["digital-records-repository"]
 }
 
-module "notifications_repository_environments" {
+module "ip_locker_lambda" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-ip-lock-checker"
+  secrets = {
+    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
+    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
+  }
+}
+
+module "ip_locker_lambda_environments" {
   for_each              = module.configuration.account_numbers
   source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
   environment           = each.key
-  repository_name       = "nationalarchives/dr2-notifications"
+  repository_name       = "nationalarchives/dr2-ip-lock-checker"
   team_slug             = "digital-records-repository"
-  integration_team_slug = ["digital-records-repository"]
+  integration_team_slug = []
   secrets = {
     ACCOUNT_NUMBER = each.value
   }
