@@ -137,6 +137,28 @@ module "ingest_mapper_environments" {
   }
 }
 
+module "ingest_upsert_archive_lambda" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-ingest-upsert-archive-folders"
+  secrets = {
+    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
+    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
+  }
+}
+
+module "ingest_upsert_archive_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-ingest-upsert-archive-folders"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = []
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
+}
+
 module "entity_event_generation_lambda" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-entity-event-generator"
