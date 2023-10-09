@@ -277,3 +277,12 @@ module "ip_locker_lambda_environments" {
     ACCOUNT_NUMBER = each.value
   }
 }
+
+module "court_document_package_anonymiser" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-court-document-package-anonymiser"
+  secrets = {
+    SLACK_WEBHOOK  = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN = data.aws_ssm_parameter.github_workflow_token.value
+  }
+}
