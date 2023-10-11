@@ -282,7 +282,8 @@ module "court_document_package_anonymiser" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-court-document-package-anonymiser"
   secrets = {
-    SLACK_WEBHOOK  = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN = data.aws_ssm_parameter.github_workflow_token.value
+    SLACK_WEBHOOK             = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN            = data.aws_ssm_parameter.github_workflow_token.value
+    MANAGEMENT_ACCOUNT_NUMBER = data.aws_caller_identity.current.account_id
   }
 }
