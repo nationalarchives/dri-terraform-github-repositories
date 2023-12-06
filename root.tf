@@ -323,6 +323,18 @@ module "court_document_package_anonymiser" {
   }
 }
 
+module "court_document_package_anonymiser_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-court-document-package-anonymiser"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = []
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
+}
+
 module "ingest_start_workflow_lambda" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-start-workflow"
