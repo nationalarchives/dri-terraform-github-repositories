@@ -444,3 +444,25 @@ module "ingest_asset_reconciler_environments" {
     ACCOUNT_NUMBER = each.value
   }
 }
+
+module "get_latest_preservica_version_lambda" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-get-latest-preservica-version"
+  secrets = {
+    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
+    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
+    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
+  }
+}
+
+module "get_latest_preservica_version_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-get-latest-preservica-version"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = []
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
+}
