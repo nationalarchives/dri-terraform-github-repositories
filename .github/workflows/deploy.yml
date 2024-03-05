@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: Configure AWS credentials for S3 state file access
         uses: aws-actions/configure-aws-credentials@v4.0.2
         with:
