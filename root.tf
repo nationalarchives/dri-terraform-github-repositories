@@ -29,50 +29,6 @@ module "github_dynamo_formatters_repository" {
   }
 }
 
-module "github_sbt_assembly_log4j_plugin_repository" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/sbt-assembly-log4j"
-  secrets = {
-    WORKFLOW_TOKEN    = data.aws_ssm_parameter.github_workflow_token.value
-    SLACK_WEBHOOK     = data.aws_ssm_parameter.github_slack_webhook.value
-    SONATYPE_USERNAME = data.aws_ssm_parameter.github_sonatype_username.value
-    SONATYPE_PASSWORD = data.aws_ssm_parameter.github_sonatype_password.value
-    GPG_PRIVATE_KEY   = data.aws_ssm_parameter.github_gpg_key.value
-    GPG_PASSPHRASE    = data.aws_ssm_parameter.github_gpg_passphrase.value
-  }
-}
-
-module "github_preservica_config_repository" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-preservica-config"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-  }
-}
-
-module "ingest_parsed_court_documents_event_handler_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-parsed-court-document-event-handler"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_parsed_court_documents_event_handler_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-parsed-court-document-event-handler"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
 module "e2e_tests" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-e2e-tests"
@@ -95,50 +51,6 @@ module "e2e_tests_environments" {
   }
 }
 
-module "ingest_asset_opex_creator_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-asset-opex-creator"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_asset_opex_creator_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-asset-opex-creator"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_folder_opex_creator_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-folder-opex-creator"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_folder_opex_creator_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-folder-opex-creator"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
 module "dr2_github_actions_scala_steward" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-github-actions"
@@ -150,69 +62,13 @@ module "dr2_github_actions_scala_steward" {
   }
 }
 
-module "ingest_mapper_lambda" {
+module "disaster_recovery" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-mapper"
+  repository_name = "nationalarchives/dr2-disaster-recovery"
   secrets = {
     MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
     SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
     WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_mapper_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-mapper"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_upsert_archive_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-upsert-archive-folders"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_upsert_archive_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-upsert-archive-folders"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "entity_event_generation_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-entity-event-generator"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "entity_event_generation_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-entity-event-generator"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = ["digital-records-repository"]
-  secrets = {
-    ACCOUNT_NUMBER = each.value
   }
 }
 
@@ -328,138 +184,6 @@ module "court_document_package_anonymiser_environments" {
   source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
   environment           = each.key
   repository_name       = "nationalarchives/dr2-court-document-package-anonymiser"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_start_workflow_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-start-workflow"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_start_workflow_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-start-workflow"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_parent_folder_opex_creator_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-parent-folder-opex-creator"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_parent_folder_opex_creator_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-parent-folder-opex-creator"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_s3_copy_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-s3-copy"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_s3_copy_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-s3-copy"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_workflow_monitor_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-workflow-monitor"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_workflow_monitor_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-workflow-monitor"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "ingest_asset_reconciler_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-asset-reconciler"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ingest_asset_reconciler_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-asset-reconciler"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "get_latest_preservica_version_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-get-latest-preservica-version"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "get_latest_preservica_version_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-get-latest-preservica-version"
   team_slug             = "digital-records-repository"
   integration_team_slug = []
   secrets = {
