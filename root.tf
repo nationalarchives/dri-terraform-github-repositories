@@ -62,9 +62,9 @@ module "dr2_github_actions_scala_steward" {
   }
 }
 
-module "disaster_recovery" {
+module "custodial_copy" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-disaster-recovery"
+  repository_name = "nationalarchives/dr2-custodial-copy"
   secrets = {
     MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
     SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
