@@ -215,6 +215,27 @@ module "dr2_ingest_environments" {
   }
 }
 
+module "dr2_runbooks" {
+  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
+  repository_name = "nationalarchives/dr2-runbooks"
+  secrets = {
+    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
+    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
+  }
+}
+
+module "dr2_runbooks_environments" {
+  for_each              = module.configuration.account_numbers
+  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
+  environment           = each.key
+  repository_name       = "nationalarchives/dr2-runbooks"
+  team_slug             = "digital-records-repository"
+  integration_team_slug = []
+  secrets = {
+    ACCOUNT_NUMBER = each.value
+  }
+}
+
 module "dr2-ingest-cc-notification-handler" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-ingest-cc-notification-handler"
