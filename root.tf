@@ -16,40 +16,6 @@ module "github_preservica_client_repository" {
   }
 }
 
-module "github_dynamo_formatters_repository" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-dynamo-formatters"
-  secrets = {
-    WORKFLOW_TOKEN    = data.aws_ssm_parameter.github_workflow_token.value
-    SLACK_WEBHOOK     = data.aws_ssm_parameter.github_slack_webhook.value
-    SONATYPE_USERNAME = data.aws_ssm_parameter.github_sonatype_username.value
-    SONATYPE_PASSWORD = data.aws_ssm_parameter.github_sonatype_password.value
-    GPG_PRIVATE_KEY   = data.aws_ssm_parameter.github_gpg_key.value
-    GPG_PASSPHRASE    = data.aws_ssm_parameter.github_gpg_passphrase.value
-  }
-}
-
-module "e2e_tests" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-e2e-tests"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "e2e_tests_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-e2e-tests"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
 
 module "dr2_github_actions_scala_steward" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
@@ -78,7 +44,7 @@ locals {
   account_secrets = {
     for environment, _ in module.configuration.account_numbers : environment => {
       "DR2_${upper(environment)}_ACCOUNT_NUMBER"        = module.configuration.account_numbers[environment]
-      "DR2_${upper(environment)}_TERRAFORM_ROLE"        = module.configuration.terraform_config[environment]["terraform_role"]
+      "DR2_${upper(environment)}_TERRAFORM_ROLE"        = module.configuration.terraform_config[environment]["terraform_account_role"]
       "DR2_${upper(environment)}_CUSTODIAN_ROLE"        = module.configuration.terraform_config[environment]["custodian_role"]
       "DR2_${upper(environment)}_STATE_BUCKET"          = module.configuration.terraform_config[environment]["state_bucket"]
       "DR2_${upper(environment)}_DYNAMO_TABLE"          = module.configuration.terraform_config[environment]["dynamo_table"]
@@ -149,28 +115,6 @@ module "tna_aws_accounts_repository_environments" {
   integration_team_slug = ["digital-records-repository"]
 }
 
-module "ip_locker_lambda" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ip-lock-checker"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "ip_locker_lambda_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ip-lock-checker"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
 module "court_document_package_anonymiser" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-court-document-package-anonymiser"
@@ -229,28 +173,6 @@ module "dr2_runbooks_environments" {
   source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
   environment           = each.key
   repository_name       = "nationalarchives/dr2-runbooks"
-  team_slug             = "digital-records-repository"
-  integration_team_slug = []
-  secrets = {
-    ACCOUNT_NUMBER = each.value
-  }
-}
-
-module "dr2-ingest-cc-notification-handler" {
-  source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
-  repository_name = "nationalarchives/dr2-ingest-cc-notification-handler"
-  secrets = {
-    MANAGEMENT_ACCOUNT = data.aws_caller_identity.current.account_id
-    SLACK_WEBHOOK      = data.aws_ssm_parameter.github_slack_webhook.value
-    WORKFLOW_TOKEN     = data.aws_ssm_parameter.github_workflow_token.value
-  }
-}
-
-module "dr2-ingest-cc-notification-handler_environments" {
-  for_each              = module.configuration.account_numbers
-  source                = "git::https://github.com/nationalarchives/da-terraform-modules//github_environment_secrets"
-  environment           = each.key
-  repository_name       = "nationalarchives/dr2-ingest-cc-notification-handler"
   team_slug             = "digital-records-repository"
   integration_team_slug = []
   secrets = {
