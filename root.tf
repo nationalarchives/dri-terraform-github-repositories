@@ -53,7 +53,7 @@ locals {
   }
 }
 
-  module "terraform_environments_repository" {
+module "terraform_environments_repository" {
   source          = "git::https://github.com/nationalarchives/da-terraform-modules//github_repository_secrets"
   repository_name = "nationalarchives/dr2-terraform-environments"
   secrets = merge(local.account_secrets["intg"], local.account_secrets["staging"], local.account_secrets["prod"], local.account_secrets["mgmt"], {
